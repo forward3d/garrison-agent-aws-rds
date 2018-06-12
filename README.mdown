@@ -1,0 +1,31 @@
+Garrison Agent - AWS RDS
+--
+
+This is a part of the [Garrison](https://github.com/forward3d/garrison) security project. This agent provides various AWS RDS compliance checks.
+
+### Checks Provided
+
+| Function Name | Description  |
+| ------------- | ------------- |
+| `check_encryption` | Alerts if encryption is not enabled for an RDS instance. |
+| `check_backup_retention` | Alerts if the backup retention is less than the configured threshold. |
+
+### Agent Specific Configuration
+
+These are additional specific configuration options for this agent. Global agent configurations still apply.
+
+| Environmental Variable  | Default | Expects |
+| ------------- | ------------- | ------------- |
+| `GARRISON_AWS_REGIONS` | [[1]](#f1) | Comma Separated Strings eg. `eu-west-1,us-west-2` |
+
+1. <span id="f2"></span> Standard AWS Regions as returned by the AWS SDK at runtime.
+
+### Check Specific Configuration
+
+Some checks provided by this agent have extra configuration options.
+
+#### `check_backup_retention`
+
+| Environmental Variable | Default |
+| ------------- | ------------- |
+| `GARRISON_RDS_THRESHOLD` | `7` |

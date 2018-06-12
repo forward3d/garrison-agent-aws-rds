@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+require './environment'
+
+@logger.info('Garrison Agent - AWS RDS - check_encryption')
+
+def unecrypted_rds(region)
+  rds = Aws::RDS::Client.new(region: region)
+  response = rds.describe_db_instances
+  response.db_instances.select { |i| i.storage_encrypted == false }
+
+rescue Aws::RDS::Errors::OptInRequired => e
+  @logger.warn "#{region} - #{e.message}"
+  return []
+rescue Aws::RDS::Errors::InvalidClientTokenId => e
+  @logger.warn "#{region} - #{e.message}"
+  return []
+end
+
+REGIONS.each do |region|
+  @logger.info "Checking region #{region}"
+  not_encrypted = unecrypted_rds(region)
+
+  not_encrypted.each do |instance|
+    @logger.info "Raising alert for '#{instance.db_instance_identifier}'"
+    alert = Garrison::Api::Alert.new
+    alert.type = 'compliance'
+    alert.family = 'infrastructure'
+    alert.source = 'aws-rds'
+
+    alert.name = 'Encryption Violation'
+    alert.target = instance.db_instance_identifier
+    alert.detail = 'storage_encrypted: false'
+    alert.severity = ENV['GARRISON_ALERT_SEVERITY'] || 'critical'
+
+    alert.finding = instance.to_h.to_json
+    alert.finding_id = "aws-rds-#{alert.target}-encryption"
+    alert.detected_at = Time.now.utc
+
+    alert.urls = [
+      {
+        name: 'AWS Dashboard',
+        url: "https://console.aws.amazon.com/rds/home?region=#{region}#dbinstance:id=#{instance.db_instance_identifier}"
+      }
+    ]
+
+    alert.key_values = [
+      {
+        key: 'datacenter',
+        value: 'aws'
+      },
+      {
+        key: 'region',
+        value: region
+      },
+      {
+        key: 'service',
+        value: 'rds'
+      }
+    ]
+
+    alert.save
+  end
+end
