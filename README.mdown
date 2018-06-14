@@ -30,8 +30,20 @@ These are additional specific configuration options for this agent. [Global agen
 
 #### AWS Authentication
 
-TODO
+As this requires access to the AWS API you will need this IAM policy as a minimum for it to operate correctly.
 
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Action": "rds:DescribeDBInstances",
+                "Resource": "*",
+                "Effect": "Allow"
+            }
+        ]
+    }
+
+We recommend using EC2/ECS Task roles so that you don't need to send credentials into the container, however if you can't use those or want to send in specific Access Keys and Secret keys, please see the [AWS Documentation](https://docs.aws.amazon.com/sdk-for-ruby/v3/developer-guide/setup-config.html#aws-ruby-sdk-credentials-environment) as to how you do that.
 
 ### Check Specific Configuration
 
