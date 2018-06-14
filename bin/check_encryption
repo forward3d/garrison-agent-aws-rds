@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require_relative '../environment'
+
+module Garrison
+  module Agents
+    check = CheckEncryption.new(@options)
+    check.perform
+  end
+end

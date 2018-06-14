@@ -10,6 +10,7 @@ This is a part of the [Garrison](https://github.com/forward3d/garrison) security
 | `check_backup_retention` | Alerts if the backup retention is less than the configured threshold. |
 | `check_encryption` | Alerts if encryption is not enabled for an RDS instance. |
 | `check_engine_version` | Alerts if the engine version is not the latest available. *(Aurora not supported)* |
+| `check_multi_az` | Alerts if the database is not setup for multi az support. *(Aurora not supported)* |
 
 ### Installation & Example
 
@@ -25,7 +26,8 @@ These are additional specific configuration options for this agent. [Global agen
 
 | Environmental Variable  | Default | Expects |
 | ------------- | ------------- | ------------- |
-| `GARRISON_AWS_REGIONS` | [[1]](#f1) | Comma Separated Strings eg. `eu-west-1,us-west-2` |
+| `GARRISON_AWS_REGIONS` | `all` [[1]](#f1) | Comma Separated Strings eg. `eu-west-1,us-west-2` |
+| `GARRISON_RDS_ENGINES` | `all` | Comma Separated Strings eg. `mysql,postgres` |
 
 1. <span id="f2"></span> Standard AWS Regions as returned by the AWS SDK at runtime.
 
@@ -58,10 +60,3 @@ Some checks provided by this agent have extra configuration options.
 | Environmental Variable | Default |
 | ------------- | ------------- |
 | `GARRISON_RDS_THRESHOLD` | `7` |
-
-#### `check_engine_version`
-
-| Environmental Variable | Default |
-| ------------- | ------------- |
-| `GARRISON_RDS_IGNORE_MAJOR` | `false` |
-| `GARRISON_RDS_ENGINES` | All RDS Engines as returned by the AWS SDK at runtime. Use comma separated list to override `mysql,postgres` |

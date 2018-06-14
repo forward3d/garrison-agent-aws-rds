@@ -21,4 +21,4 @@ WORKDIR /usr/src/garrison-agent
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /usr/src/garrison-agent /usr/src/garrison-agent
 
-ENTRYPOINT ["bundle", "exec", "ruby"]
+ENV PATH "$PATH:/usr/src/garrison-agent/bin"

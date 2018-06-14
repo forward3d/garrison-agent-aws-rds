@@ -2,15 +2,24 @@ require 'bundler'
 Bundler.require(:default)
 ROOT = File.dirname(__FILE__)
 
-Dir[File.join(ROOT, 'lib', '*.rb')].each do |file|
+Dir[File.join(ROOT, 'garrison/lib/*.rb')].each do |file|
   require file
 end
 
-@logger.info('Garrison Agent - AWS RDS')
-
-REGIONS = ENV['GARRISON_AWS_REGIONS'] ? ENV['GARRISON_AWS_REGIONS'].split(',') : Aws.partition('aws').regions.map(&:name)
-url     = ENV['GARRISON_URL']
+Dir[File.join(ROOT, 'garrison/checks/*.rb')].each do |file|
+  require file
+end
 
 Garrison::Api.configure do |config|
-  config.url = url
+  config.url = ENV['GARRISON_URL']
+end
+
+Garrison::Logging.info('Garrison Agent - AWS RDS')
+
+module Garrison
+  module Agents
+    @options = {}
+    @options[:regions] = ENV['GARRISON_AWS_REGIONS'] ? ENV['GARRISON_AWS_REGIONS'].split(',') : nil
+    @options[:engines] = ENV['GARRISON_RDS_ENGINES'] ? ENV['GARRISON_RDS_ENGINES'].split(',') : nil
+  end
 end
