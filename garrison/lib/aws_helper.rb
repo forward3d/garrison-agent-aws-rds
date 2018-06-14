@@ -1,6 +1,10 @@
 module Garrison
   class AwsHelper
 
+    def self.whoami
+      @whoami ||= Aws::STS::Client.new.get_caller_identity
+    end
+
     def self.all_regions
       Aws.partition('aws').regions.map(&:name)
     end

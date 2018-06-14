@@ -49,7 +49,8 @@ module Garrison
 
         alert.key_values = key_values
         alert.key_values << { key: 'datacenter', value: 'aws' }
-        alert.key_values << { key: 'service', value: 'rds' }
+        alert.key_values << { key: 'aws-service', value: 'rds' }
+        alert.key_values << { key: 'aws-account', value: AwsHelper.whoami.account }
 
         alert.save
       end

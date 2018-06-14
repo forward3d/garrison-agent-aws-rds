@@ -32,7 +32,7 @@ module Garrison
               ],
               key_values: [
                 {
-                  key: 'region',
+                  key: 'aws-region',
                   value: region
                 }
               ]
