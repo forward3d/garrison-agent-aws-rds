@@ -10,6 +10,14 @@ This is a part of the [Garrison](https://github.com/forward3d/garrison) security
 | `check_encryption` | Alerts if encryption is not enabled for an RDS instance. |
 | `check_backup_retention` | Alerts if the backup retention is less than the configured threshold. |
 
+### Installation & Example
+
+Docker Hub - https://hub.docker.com/r/forward3d/garrison-agent-aws-rds/
+
+    docker pull forward3d/garrison-agent-aws-rds
+    docker run --rm -e "GARRISON_URL=https://garrison.internal.acme.com" forward3d/garrison-agent-aws-rds check_encryption
+    docker run --rm -e "GARRISON_URL=https://garrison.internal.acme.com" -e "GARRISON_AWS_REGIONS=eu-west-1,us-west-2" forward3d/garrison-agent-aws-rds check_backup_retention
+
 ### Agent Specific Configuration
 
 These are additional specific configuration options for this agent. [Global agent configurations](https://github.com/forward3d/garrison#global-configuration-options) still apply.
@@ -19,6 +27,11 @@ These are additional specific configuration options for this agent. [Global agen
 | `GARRISON_AWS_REGIONS` | [[1]](#f1) | Comma Separated Strings eg. `eu-west-1,us-west-2` |
 
 1. <span id="f2"></span> Standard AWS Regions as returned by the AWS SDK at runtime.
+
+#### AWS Authentication
+
+TODO
+
 
 ### Check Specific Configuration
 
