@@ -19,10 +19,12 @@ GEM
       multi_xml (>= 0.5.2)
     jmespath (1.4.0)
     method_source (0.9.0)
+    mixlib-versioning (1.2.2)
     multi_xml (0.6.0)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
+    to_bool (1.0.1)
 
 PLATFORMS
   ruby
@@ -30,7 +32,9 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-rds (~> 1)
   garrison-api (~> 1.0)
+  mixlib-versioning (~> 1.2, >= 1.2.2)
   pry
+  to_bool (~> 1.0, >= 1.0.1)
 
 BUNDLED WITH
    1.16.1

@@ -1,0 +1,117 @@
+#!/usr/bin/env ruby
+
+require './environment'
+
+@logger.info('Garrison Agent - AWS RDS - check_engine_version')
+
+IGNORE_MAJOR = ENV['GARRISON_RDS_IGNORE_MAJOR'].to_bool || false
+
+def describe_db_engine_versions(rds)
+  Enumerator.new do |yielder|
+    marker = ''
+
+    loop do
+      results = rds.describe_db_engine_versions(marker: marker)
+      results.db_engine_versions.map { |item| yielder << item }
+
+      if results.marker
+        marker = results.marker
+      else
+        raise StopIteration
+      end
+    end
+  end.lazy
+end
+
+def available_engines_and_versions(rds)
+  @logger.debug 'AWS SDK - Pulling all supported engines and versions'
+  db_engine_versions = describe_db_engine_versions(rds)
+
+  db_engine_versions.each_with_object({}) do |engine_and_version, hash|
+    hash[engine_and_version.engine] ||= []
+    hash[engine_and_version.engine] << Mixlib::Versioning.parse(engine_and_version.engine_version)
+  end
+end
+
+def versions_rds(rds)
+  @logger.debug 'AWS SDK - Pulling all RDS instance metadata'
+  db_instances = rds.describe_db_instances.db_instances
+  return [] if db_instances.empty?
+  engines_and_versions = available_engines_and_versions(rds)
+
+  if ENV['GARRISON_RDS_ENGINES']
+    only_engines = ENV['GARRISON_RDS_ENGINES'].split(',')
+    db_instances.select! { |instance| only_engines.include?(instance.engine) }
+  end
+
+  # aurora instances don't report their engine specifically enough to match
+  # against the available versions returned by the api as of 2018-06-14
+  db_instances.reject! { |instance| instance.engine == 'aurora' }
+
+  db_instances.map do |instance|
+    instance_version = Mixlib::Versioning.parse(instance.engine_version)
+    engine_versions = engines_and_versions[instance.engine]
+
+    {
+      instance: instance,
+      newer_versions: engine_versions.select { |version| version > instance_version }
+    }
+  end
+
+rescue Aws::RDS::Errors::OptInRequired => e
+  @logger.warn "#{region} - #{e.message}"
+  return []
+rescue Aws::RDS::Errors::InvalidClientTokenId => e
+  @logger.warn "#{region} - #{e.message}"
+  return []
+end
+
+REGIONS.each do |region|
+  @logger.info "Checking region #{region}"
+  rds = Aws::RDS::Client.new(region: region)
+  versions = versions_rds(rds).select { |i| i[:newer_versions].any? }
+
+  versions.each do |database|
+    @logger.info "Raising alert for '#{database[:instance].db_instance_identifier}'"
+    alert = Garrison::Api::Alert.new
+    alert.type = ENV['GARRISON_ALERT_TYPE'] || 'compliance'
+    alert.family = ENV['GARRISON_ALERT_FAMILY'] || 'infrastructure'
+    alert.source = 'aws-rds'
+
+    alert.name = 'Database Out of Date'
+    alert.target = database[:instance].db_instance_identifier
+    alert.detail = "engine_version: #{database[:instance].engine_version} < #{database[:newer_versions].map(&:to_s).join(', ')}"
+    alert.severity = ENV['GARRISON_ALERT_SEVERITY'] || 'low'
+
+    alert.finding = {
+      newer_versions: database[:newer_versions],
+      instance: database[:instance].to_h
+    }.to_json
+    alert.finding_id = "aws-rds-#{alert.target}-dbv_#{database[:instance].engine_version}"
+    alert.detected_at = Time.now.utc
+
+    alert.urls = [
+      {
+        name: 'AWS Dashboard',
+        url: "https://console.aws.amazon.com/rds/home?region=#{region}#dbinstance:id=#{database[:instance].db_instance_identifier}"
+      }
+    ]
+
+    alert.key_values = [
+      {
+        key: 'datacenter',
+        value: 'aws'
+      },
+      {
+        key: 'region',
+        value: region
+      },
+      {
+        key: 'service',
+        value: 'rds'
+      }
+    ]
+
+    alert.save
+  end
+end

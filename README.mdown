@@ -7,8 +7,9 @@ This is a part of the [Garrison](https://github.com/forward3d/garrison) security
 
 | Function Name | Description  |
 | ------------- | ------------- |
-| `check_encryption` | Alerts if encryption is not enabled for an RDS instance. |
 | `check_backup_retention` | Alerts if the backup retention is less than the configured threshold. |
+| `check_encryption` | Alerts if encryption is not enabled for an RDS instance. |
+| `check_engine_version` | Alerts if the engine version is not the latest available. *(Aurora not supported)* |
 
 ### Installation & Example
 
@@ -36,7 +37,10 @@ As this requires access to the AWS API you will need this IAM policy as a minimu
         "Version": "2012-10-17",
         "Statement": [
             {
-                "Action": "rds:DescribeDBInstances",
+                "Action": [
+                  "rds:DescribeDBInstances"
+                  "rds:DescribeDBEngineVersions"
+                ],
                 "Resource": "*",
                 "Effect": "Allow"
             }
@@ -54,3 +58,10 @@ Some checks provided by this agent have extra configuration options.
 | Environmental Variable | Default |
 | ------------- | ------------- |
 | `GARRISON_RDS_THRESHOLD` | `7` |
+
+#### `check_engine_version`
+
+| Environmental Variable | Default |
+| ------------- | ------------- |
+| `GARRISON_RDS_IGNORE_MAJOR` | `false` |
+| `GARRISON_RDS_ENGINES` | All RDS Engines as returned by the AWS SDK at runtime. Use comma separated list to override `mysql,postgres` |
