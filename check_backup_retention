@@ -32,7 +32,7 @@ REGIONS.each do |region|
 
     alert.name = 'Backup Violation'
     alert.target = instance.db_instance_identifier
-    alert.detail = "backup_retention_period: #{instance.backup_retention_period}"
+    alert.detail = "backup_retention_period: #{instance.backup_retention_period} (<#{THRESHOLD})"
     alert.severity = ENV['GARRISON_ALERT_SEVERITY'] || 'high'
 
     alert.finding = instance.to_h.to_json
