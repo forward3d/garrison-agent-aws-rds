@@ -12,7 +12,7 @@ This is a part of the [Garrison](https://github.com/forward3d/garrison) security
 
 ### Agent Specific Configuration
 
-These are additional specific configuration options for this agent. Global agent configurations still apply.
+These are additional specific configuration options for this agent. [Global agent configurations](https://github.com/forward3d/garrison#global-configuration-options) still apply.
 
 | Environmental Variable  | Default | Expects |
 | ------------- | ------------- | ------------- |
