@@ -3,7 +3,7 @@
 require_relative '../environment'
 
 module Garrison
-  module Agents
+  module Checks
     @options[:threshold] = ENV['GARRISON_RDS_THRESHOLD']
     check = CheckBackupRetention.new(@options)
     check.perform

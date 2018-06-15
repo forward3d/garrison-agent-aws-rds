@@ -17,7 +17,7 @@ end
 Garrison::Logging.info('Garrison Agent - AWS RDS')
 
 module Garrison
-  module Agents
+  module Checks
     @options = {}
     @options[:regions] = ENV['GARRISON_AWS_REGIONS'] ? ENV['GARRISON_AWS_REGIONS'].split(',') : nil
     @options[:engines] = ENV['GARRISON_RDS_ENGINES'] ? ENV['GARRISON_RDS_ENGINES'].split(',') : nil

@@ -1,5 +1,5 @@
 module Garrison
-  module Agents
+  module Checks
     class CheckBackupRetention < Check
 
       def settings

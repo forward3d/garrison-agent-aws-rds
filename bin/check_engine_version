@@ -3,7 +3,7 @@
 require_relative '../environment'
 
 module Garrison
-  module Agents
+  module Checks
     check = CheckEngineVersion.new(@options)
     check.perform
   end

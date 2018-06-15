@@ -1,5 +1,5 @@
 module Garrison
-  module Agents
+  module Checks
     class CheckMultiAz < Check
 
       def settings
