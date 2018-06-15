@@ -13,7 +13,7 @@ GEM
       aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.2)
     coderay (1.1.2)
-    garrison-api (1.0.1)
+    garrison-api (1.0.2)
       httparty (~> 0.16.2)
     httparty (0.16.2)
       multi_xml (>= 0.5.2)
@@ -30,7 +30,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-rds (~> 1)
-  garrison-api (~> 1.0)
+  garrison-api (~> 1)
   mixlib-versioning (~> 1.2, >= 1.2.2)
   pry
 

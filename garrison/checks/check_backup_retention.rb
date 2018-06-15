@@ -3,12 +3,21 @@ module Garrison
     class CheckBackupRetention < Check
 
       def settings
+        self.source ||= 'aws-rds'
         self.severity ||= 'high'
         self.family ||= 'infrastructure'
         self.type ||= 'compliance'
         self.options[:regions] ||= 'all'
         self.options[:engines] ||= 'all'
         self.options[:threshold] ||= 7
+      end
+
+      def key_values
+        [
+          { key: 'datacenter', value: 'aws' },
+          { key: 'aws-service', value: 'rds' },
+          { key: 'aws-account', value: AwsHelper.whoami.account }
+        ]
       end
 
       def perform

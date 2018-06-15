@@ -3,11 +3,20 @@ module Garrison
     class CheckEngineVersion < Check
 
       def settings
+        self.source ||= 'aws-rds'
         self.severity ||= 'low'
         self.family ||= 'infrastructure'
         self.type ||= 'compliance'
         self.options[:regions] ||= 'all'
         self.options[:engines] ||= 'all'
+      end
+
+      def key_values
+        [
+          { key: 'datacenter', value: 'aws' },
+          { key: 'aws-service', value: 'rds' },
+          { key: 'aws-account', value: AwsHelper.whoami.account }
+        ]
       end
 
       def perform
