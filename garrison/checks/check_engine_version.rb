@@ -23,7 +23,19 @@ module Garrison
         options[:regions] = AwsHelper.all_regions if options[:regions] == 'all'
         options[:regions].each do |region|
           Logging.info "Checking region #{region}"
-          rds = Aws::RDS::Client.new(region: region)
+
+          if ENV['AWS_ASSUME_ROLE_CREDENTIALS_ARN']
+            role_credentials = Aws::AssumeRoleCredentials.new(
+              client: Aws::STS::Client.new(region: region),
+              role_arn: ENV['AWS_ASSUME_ROLE_CREDENTIALS_ARN'],
+              role_session_name: 'garrison-agent-rds'
+            )
+
+            rds = Aws::RDS::Client.new(credentials: role_credentials, region: region)
+          else
+            rds = Aws::RDS::Client.new(region: region)
+          end
+
           versions = versions_rds(rds).select { |i| i[:newer_versions].any? }
 
           versions.each do |database|
