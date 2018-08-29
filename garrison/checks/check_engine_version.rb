@@ -15,7 +15,7 @@ module Garrison
         [
           { key: 'datacenter', value: 'aws' },
           { key: 'aws-service', value: 'rds' },
-          { key: 'aws-account', value: AwsHelper.whoami.account }
+          { key: 'aws-account', value: AwsHelper.whoami }
         ]
       end
 
