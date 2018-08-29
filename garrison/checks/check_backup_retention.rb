@@ -16,7 +16,7 @@ module Garrison
         [
           { key: 'datacenter', value: 'aws' },
           { key: 'aws-service', value: 'rds' },
-          { key: 'aws-account', value: AwsHelper.whoami.account }
+          { key: 'aws-account', value: AwsHelper.whoami }
         ]
       end
 
@@ -53,7 +53,18 @@ module Garrison
       private
 
       def no_backup_rds(region)
-        rds = Aws::RDS::Client.new(region: region)
+        if ENV['AWS_ASSUME_ROLE_CREDENTIALS_ARN']
+          role_credentials = Aws::AssumeRoleCredentials.new(
+            client: Aws::STS::Client.new(region: region),
+            role_arn: ENV['AWS_ASSUME_ROLE_CREDENTIALS_ARN'],
+            role_session_name: 'garrison-agent-rds'
+          )
+
+          rds = Aws::RDS::Client.new(credentials: role_credentials, region: region)
+        else
+          rds = Aws::RDS::Client.new(region: region)
+        end
+
         db_instances = rds.describe_db_instances.db_instances
 
         if options[:engines] && options[:engines] != 'all'
