@@ -51,6 +51,15 @@ As this requires access to the AWS API you will need this IAM policy as a minimu
 
 We recommend using EC2/ECS Task roles so that you don't need to send credentials into the container, however if you can't use those or want to send in specific Access Keys and Secret keys, please see the [AWS Documentation](https://docs.aws.amazon.com/sdk-for-ruby/v3/developer-guide/setup-config.html#aws-ruby-sdk-credentials-environment) as to how you do that.
 
+##### Cross-Account Authentication (`STS AssumeRole`)
+
+If you run Garrison agents in one account, and want to reach into other AWS accounts you need to send in extra environmental variables to support that.
+
+| Environmental Variable | Value |
+| ------------- | ------------- |
+| `AWS_ACCOUNT_ID` | Not used as part of authentication, but to override the tag set on any alerts |
+| `AWS_ASSUME_ROLE_CREDENTIALS_ARN` | Arn of the role (in the other account) you wish to assume |
+
 ### Check Specific Configuration
 
 Some checks provided by this agent have extra configuration options.
