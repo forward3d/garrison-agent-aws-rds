@@ -52,7 +52,18 @@ module Garrison
       private
 
       def single_zone_rds(region)
-        rds = Aws::RDS::Client.new(region: region)
+        if ENV['AWS_ASSUME_ROLE_CREDENTIALS_ARN']
+          role_credentials = Aws::AssumeRoleCredentials.new(
+            client: Aws::STS::Client.new(region: region),
+            role_arn: ENV['AWS_ASSUME_ROLE_CREDENTIALS_ARN'],
+            role_session_name: 'garrison-agent-rds'
+          )
+
+          rds = Aws::RDS::Client.new(credentials: role_credentials, region: region)
+        else
+          rds = Aws::RDS::Client.new(region: region)
+        end
+
         db_instances = rds.describe_db_instances.db_instances
 
         # aurora instances don't honor the multi_az flag, it always returns false
