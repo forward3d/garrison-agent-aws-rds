@@ -71,6 +71,9 @@ module Garrison
           db_instances.select! { |i| options[:engines].include?(i.engine) }
         end
 
+        # don't include read replicas
+        db_instances.select! { |i| i.read_replica_source_db_instance_identifier.nil? }
+
         db_instances.select { |i| i.backup_retention_period < options[:threshold].to_i }
       rescue Aws::RDS::Errors::OptInRequired => e
         Logging.warn "#{region} - #{e.message}"
