@@ -69,6 +69,9 @@ module Garrison
         # aurora instances don't honor the multi_az flag, it always returns false
         db_instances.reject! { |instance| instance.engine == 'aurora' }
 
+        # don't include read replicas
+        db_instances.select! { |i| i.read_replica_source_db_instance_identifier.nil? }
+
         if options[:engines] && options[:engines] != 'all'
           db_instances.select! { |i| options[:engines].include?(i.engine) }
         end
