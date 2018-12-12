@@ -29,7 +29,7 @@ These are additional specific configuration options for this agent. [Global agen
 | `GARRISON_AWS_REGIONS` | `all` [[1]](#f1) | Comma Separated Strings eg. `eu-west-1,us-west-2` |
 | `GARRISON_RDS_ENGINES` | `all` | Comma Separated Strings eg. `mysql,postgres` |
 
-1. <span id="f2"></span> Standard AWS Regions as returned by the AWS SDK at runtime.
+1. <span id="f2"></span> AWS Regions as returned by the AWS SDK at runtime for RDS.
 
 #### AWS Authentication
 
