@@ -66,8 +66,9 @@ module Garrison
 
         db_instances = rds.describe_db_instances.db_instances
 
-        # aurora instances don't honor the multi_az flag, it always returns false
+        # aurora & docdb instances don't have the multi_az flag, it always returns false
         db_instances.reject! { |instance| instance.engine == 'aurora' }
+        db_instances.reject! { |instance| instance.engine == 'docdb' }
 
         # don't include read replicas
         db_instances.select! { |i| i.read_replica_source_db_instance_identifier.nil? }
