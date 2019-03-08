@@ -44,9 +44,9 @@ module Garrison
             alert(
               name: 'Database Out of Date',
               target: target,
-              detail: "engine_version: #{database[:instance].engine_version} < #{database[:newer_versions].map(&:to_s).join(', ')}",
+              detail: "engine_version: #{database[:instance].engine_version} < #{database[:newer_versions].map(&:engine_version).join(', ')}",
               finding: {
-                newer_versions: database[:newer_versions],
+                newer_versions: database[:newer_versions].map(&:to_h),
                 instance: database[:instance].to_h
               }.to_json,
               finding_id: "aws-rds-#{target}-dbv_#{database[:instance].engine_version}",
@@ -84,13 +84,10 @@ module Garrison
         # against the available versions returned by the api as of 2018-06-14
         db_instances.reject! { |instance| instance.engine == 'aurora' }
 
-        db_instances.map do |instance|
-          instance_version = Mixlib::Versioning.parse(instance.engine_version)
-          engine_versions = engines_and_versions[instance.engine]
-
+        db_instances.map do |i|
           {
-            instance: instance,
-            newer_versions: engine_versions.select { |version| version > instance_version }
+            instance: i,
+            newer_versions: engines_and_versions[i.engine][i.engine_version]
           }
         end
 

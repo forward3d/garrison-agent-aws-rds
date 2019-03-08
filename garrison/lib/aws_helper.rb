@@ -13,9 +13,9 @@ module Garrison
       Logging.debug 'AWS SDK - Pulling all supported engines and versions'
       db_engine_versions = describe_db_engine_versions(rds)
 
-      db_engine_versions.each_with_object({}) do |engine_and_version, hash|
-        hash[engine_and_version.engine] ||= []
-        hash[engine_and_version.engine] << Mixlib::Versioning.parse(engine_and_version.engine_version)
+      db_engine_versions.each_with_object({}) do |eav, hash|
+        hash[eav.engine] ||= Hash.new
+        hash[eav.engine][eav.engine_version] = eav.valid_upgrade_target
       end
     end
 
