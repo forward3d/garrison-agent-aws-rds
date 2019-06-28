@@ -92,10 +92,10 @@ module Garrison
         end
 
       rescue Aws::RDS::Errors::OptInRequired => e
-        Logging.warn "#{region} - #{e.message}"
+        Logging.warn "#{rds.config.region} - #{e.message}"
         return []
       rescue Aws::RDS::Errors::InvalidClientTokenId => e
-        Logging.warn "#{region} - #{e.message}"
+        Logging.warn "#{rds.config.region} - #{e.message}"
         return []
       end
     end
