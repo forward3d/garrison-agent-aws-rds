@@ -1,4 +1,4 @@
-FROM ruby:2.5.1-alpine3.7 as build
+FROM ruby:2.6-alpine3.7 as build
 MAINTAINER developers@forward3d.com
 
 RUN mkdir -p /usr/src/garrison-agent
@@ -15,7 +15,7 @@ RUN find /usr/local/bundle -iname '*.a' -exec rm {} \;
 
 
 # RUNTIME CONTAINER
-FROM ruby:2.5.1-alpine3.7
+FROM ruby:2.6-alpine3.7
 
 WORKDIR /usr/src/garrison-agent
 COPY --from=build /usr/local/bundle /usr/local/bundle
