@@ -4,6 +4,7 @@ MAINTAINER developers@forward3d.com
 RUN mkdir -p /usr/src/garrison-agent
 WORKDIR /usr/src/garrison-agent
 
+RUN gem install bundler -v "~> 2.0"
 COPY Gemfile Gemfile.lock /usr/src/garrison-agent/
 RUN bundle install --jobs "$(getconf _NPROCESSORS_ONLN)" --retry 5 --without development
 
