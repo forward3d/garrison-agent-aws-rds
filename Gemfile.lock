@@ -14,9 +14,9 @@ GEM
     aws-sigv4 (1.1.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
     coderay (1.1.2)
-    garrison-api (1.0.8)
-      httparty (~> 0.16.2)
-    httparty (0.16.4)
+    garrison-api (2.0.0)
+      httparty (>= 0.16.2, < 0.18.0)
+    httparty (0.17.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
     jmespath (1.4.0)
@@ -34,7 +34,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-rds (~> 1)
-  garrison-api (~> 1)
+  garrison-api (~> 2)
   pry
 
 BUNDLED WITH
