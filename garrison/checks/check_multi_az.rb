@@ -73,9 +73,6 @@ module Garrison
 
         # don't include read replicas
         db_instances.select! { |i| i.read_replica_source_db_instance_identifier.nil? }
-        
-        # exclude instances that are not mulit_az
-        db_instances.select! { |i| i.multi_az == 'false' }
 
         if options[:engines] && options[:engines] != 'all'
           db_instances.select! { |i| options[:engines].include?(i.engine) }
