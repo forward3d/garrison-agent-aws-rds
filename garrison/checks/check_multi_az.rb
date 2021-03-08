@@ -68,6 +68,7 @@ module Garrison
 
         # aurora & docdb instances don't have the multi_az flag, it always returns false
         db_instances.reject! { |instance| instance.engine == 'aurora' }
+        db_instances.reject! { |instance| instance.engine == 'aurora-mysql' }
         db_instances.reject! { |instance| instance.engine == 'docdb' }
 
         # don't include read replicas
