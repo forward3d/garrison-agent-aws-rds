@@ -69,3 +69,13 @@ Some checks provided by this agent have extra configuration options.
 | Environmental Variable | Default |
 | ------------- | ------------- |
 | `GARRISON_RDS_THRESHOLD` | `7` |
+
+#### `check_multi_az`
+
+Databases tagged with `multi_az = false` will be excluded from the checks, e.g.:
+  tags [
+    {
+      "Key": "multi_az",
+      "Value": "false"
+    }
+  ]
