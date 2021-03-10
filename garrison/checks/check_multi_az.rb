@@ -66,12 +66,26 @@ module Garrison
 
         db_instances = rds.describe_db_instances.db_instances
 
-        # aurora & docdb instances don't have the multi_az flag, it always returns false
+        # aurora, aurora-mysql, aurora-postgresql, & docdb instances don't have the multi_az flag, it always returns false
         db_instances.reject! { |instance| instance.engine == 'aurora' }
+        db_instances.reject! { |instance| instance.engine == 'aurora-mysql' }
+        db_instances.reject! { |instance| instance.engine == 'aurora-postgresql' }
         db_instances.reject! { |instance| instance.engine == 'docdb' }
 
         # don't include read replicas
         db_instances.select! { |i| i.read_replica_source_db_instance_identifier.nil? }
+
+        # Exclude databases based on tag
+        excluded_dbs = []
+        db_instances.each do |i|
+          tags = rds.list_tags_for_resource({ resource_name: i.db_instance_arn })
+          tags.tag_list.each do |t|
+            if t.key == "multi_az" and t.value == "false"
+              excluded_dbs.push(i.db_name)
+            end
+          end
+        end
+        db_instances.reject! {|i| excluded_dbs.include? i.db_name}
 
         if options[:engines] && options[:engines] != 'all'
           db_instances.select! { |i| options[:engines].include?(i.engine) }
