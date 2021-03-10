@@ -10,7 +10,7 @@ This is a part of the [Garrison](https://github.com/forward3d/garrison) security
 | `check_backup_retention` | Alerts if the backup retention is less than the configured threshold. |
 | `check_encryption` | Alerts if encryption is not enabled for an RDS instance. |
 | `check_engine_version` | Alerts if the engine version is not the latest available. *(Aurora not supported)* |
-| `check_multi_az` | Alerts if the database is not setup for multi az support. *(Aurora not supported)* |
+| `check_multi_az` | Alerts if the database is not setup for multi az support. *(Aurora, aurora-mysql, and aurora-postgresql not supported)* |
 
 ### Installation & Example
 
@@ -69,3 +69,13 @@ Some checks provided by this agent have extra configuration options.
 | Environmental Variable | Default |
 | ------------- | ------------- |
 | `GARRISON_RDS_THRESHOLD` | `7` |
+
+#### `check_multi_az`
+
+Databases tagged with `multi_az = false` will be excluded from the checks, e.g.:
+  tags [
+    {
+      "Key": "multi_az",
+      "Value": "false"
+    }
+  ]
